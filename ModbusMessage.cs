@@ -21,6 +21,5 @@ namespace MBClient
             Data = new byte[datasize + 1];
             Function = function;
         }
-        
     }
 }

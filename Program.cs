@@ -4,11 +4,15 @@ using System.Text;
 using MBClient;
 
 //ModbusClient client = new ModbusTCPClient("localhost", 502);
-ModbusClient client = new ModbusRTUClient("COM1", 9600);
+//ModbusClient client = new ModbusRTUClient("COM1", 9600);
+//ModbusClient client = new ModbusASCIIClient("COM1", 9600);
+
+#region Write Holding Registers
 
 //float[,] brightness = Bitmaps.GetBrightness(@"E:\Studia\IS2S3\pl.png", 10, 10);
 
-//for (int i = 0; i < brightness.GetLength(0); i++){
+//for (int i = 0; i < brightness.GetLength(0); i++)
+//{
 //    for (int j = 0; j < brightness.GetLength(1); j++)
 //    {
 //        Console.Write($"{brightness[i, j]}");
@@ -22,6 +26,10 @@ ModbusClient client = new ModbusRTUClient("COM1", 9600);
 //        client.QA(new ModbusWMRRequest(Enumerable.Range(0, 10).Select(x => (ushort)(brightness[i, x] < 0.6 ? 8888 : 1)).ToArray(), (ushort)(10 * i)));
 //}
 
+#endregion
+
+#region Read Holding Registers
+
 //var readBitmap = client.QA(new ModbusRHRRequest(0, 100));
 
 //for (int i = 0; i < 10; i++)
@@ -34,12 +42,20 @@ ModbusClient client = new ModbusRTUClient("COM1", 9600);
 //    Console.WriteLine();
 //}
 
+#endregion
+
+#region Read Input Registers
+
 //var readInputRegistersAnswer = client.QA(new ModbusRIRRequest(0, 4));
 
 //for (int i = 0; i < 4; i++)
 //{
 //    Console.WriteLine(readInputRegistersAnswer.Data.GetTwoBytes(2 * (i + 1)));
 //}
+
+#endregion
+
+#region Read Discrete Inputs
 
 //var readDiscreteInputs = client.QA(new ModbusRDIRequest(0, 16));
 
@@ -53,12 +69,20 @@ ModbusClient client = new ModbusRTUClient("COM1", 9600);
 //    }
 //}
 
+#endregion
 
-//ushort[] words = [0x4D << 8 | 0x01];
+#region Coils Write
 
-//var writeCoilsAnswer = client.QA(new ModbusWMCRequest(words, 0, 9));
+//ushort[] words = [0x4D << 8 | 0x51];
 
-var readCoilsAnswer = client.QA(new ModbusRCRequest(0x001D, 31));
+//client.QA(new ModbusWMCRequest(words, 0, 16));
+
+#endregion
+
+
+#region Coils Read
+
+var readCoilsAnswer = client.QA(new ModbusRCRequest(0, 16));
 
 var byteCount = readCoilsAnswer.Data[1];
 
@@ -78,3 +102,5 @@ for (int i = 0; i < byteCount; i++)
 }
 
 Console.WriteLine(sb.ToString());
+
+#endregion

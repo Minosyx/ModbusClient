@@ -3,23 +3,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MBClient
 {
     public static class Tools
     {
-        public static void FillTwoBytes(this byte[] data, int offset, ushort value)
+        public static void FillTwoBytes(this byte[] data, int offset, ushort value, bool bigEndian = true)
         {
-            data[offset] = (byte)(value >> 8);
-            data[offset + 1] = (byte) value;
+            if (bigEndian)
+            {
+                data[offset] = (byte)(value >> 8);
+                data[offset + 1] = (byte)value;
+            }
+            else
+            {
+                data[offset] = (byte)value;
+                data[offset + 1] = (byte)(value >> 8);
+            }
         }
 
-        public static ushort GetTwoBytes(this byte[] data, int offset)
+        public static ushort GetTwoBytes(this byte[] data, int offset, bool bigEndian = true)
         {
-            return (ushort)(data[offset] << 8 | data[offset + 1]);
+            if (bigEndian)
+            {
+                return (ushort)((data[offset] << 8) + data[offset + 1]);
+            }
+
+            return (ushort)((data[offset + 1] << 8) + data[offset]);
         }
 
-        private readonly static ushort[] wCRCTable = {
+        private static readonly ushort[] wCRCTable = {
             0X0000, 0XC0C1, 0XC181, 0X0140, 0XC301, 0X03C0, 0X0280, 0XC241, 0XC601, 0X06C0,
             0X0780, 0XC741, 0X0500, 0XC5C1, 0XC481, 0X0440, 0XCC01, 0X0CC0, 0X0D80, 0XCD41,
             0X0F00, 0XCFC1, 0XCE81, 0X0E40, 0X0A00, 0XCAC1, 0XCB81, 0X0B40, 0XC901, 0X09C0,
@@ -51,12 +65,52 @@ namespace MBClient
         public static ushort CalculateCRC(this byte[] bytes)
         {
             int icrc = 0xFFFF;
-            for (int i = 0; i < bytes.Length - 2; i++)
+            for (int i = 0; i < bytes.Length; i++)
             {
                 icrc = (icrc >> 8) ^ wCRCTable[(icrc ^ bytes[i]) & 0xff];
             }
-            icrc = (icrc << 8) | (icrc >> 8 & 0xFF);
             return (ushort)icrc;
+        }
+
+        public static bool ValidateCRC(this byte[] bytes)
+        {
+            return bytes[..^2].CalculateCRC() == bytes.GetTwoBytes(bytes.Length - 2, false);
+        }
+
+        public static byte CalculateLRC(this byte[] bytes)
+        {
+            byte lrc = 0;
+            foreach (byte b in bytes)
+                lrc += b;
+
+            lrc = (byte)((lrc ^ 0xFF) + 1);
+
+            return lrc;
+        }
+
+        public static bool ValidateLRC(this byte[] bytes)
+        {
+            return bytes[..^1].CalculateLRC() == bytes[^1];
+        }
+
+        public static string ToHexString(this byte[] bytes)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (byte b in bytes)
+            {
+                sb.Append(b.ToString("X2"));
+            }
+            return sb.ToString();
+        }
+
+        public static byte[] ToByteArray(this char[] chars)
+        {
+            byte[] bytes = new byte[chars.Length / 2];
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                bytes[i] = Convert.ToByte(new string(chars, i * 2, 2), 16);
+            }
+            return bytes;
         }
     }
 }
