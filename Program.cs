@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography;
+using System.Text;
 using MBClient;
 
 ModbusClient client = new ModbusTCPClient("localhost", 502);
@@ -51,15 +52,27 @@ ModbusClient client = new ModbusTCPClient("localhost", 502);
 //}
 
 
-byte[] inputs = [1,0,0,1,1,1,1,0,1,1,0,1,0,1,1,0];
-ushort[] words = new ushort[inputs.Length / 8];
-// group above into 8 bit words and store them Big Endian
-for (int i = 0; i < words.Length; i++)
+//ushort[] words = [0x4D << 8 | 0x01];
+
+//var writeCoilsAnswer = client.QA(new ModbusWMCRequest(words, 0, 9));
+
+var readCoilsAnswer = client.QA(new ModbusRCRequest(0, 16));
+
+var byteCount = readCoilsAnswer.Data[1];
+
+var stack = new Stack<byte>();
+
+for (int i = 0; i < byteCount; i++)
 {
-    for (int j = 0; j < 8; j++)
-    {
-        words[i] |= (ushort)((inputs[i * 8 + j] << (7 - j)) & (1 << (7 - j)));
-    }
+    byte b = readCoilsAnswer.Data[2 + i];
+    stack.Push(b);
 }
 
-var writeCoilsAnswer = client.QA(new ModbusWMCRequest(0, 16, words));
+var sb = new StringBuilder();
+for (int i = 0; i < byteCount; i++)
+{
+    byte b = stack.Pop();
+    sb.Append(b.ToString("X2"));
+}
+
+Console.WriteLine(sb.ToString());
