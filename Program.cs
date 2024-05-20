@@ -1,8 +1,10 @@
-﻿using System.Security.Cryptography;
+﻿using System.IO.Ports;
+using System.Security.Cryptography;
 using System.Text;
 using MBClient;
 
-ModbusClient client = new ModbusTCPClient("localhost", 502);
+//ModbusClient client = new ModbusTCPClient("localhost", 502);
+ModbusClient client = new ModbusRTUClient("COM1", 9600);
 
 //float[,] brightness = Bitmaps.GetBrightness(@"E:\Studia\IS2S3\pl.png", 10, 10);
 
@@ -56,7 +58,7 @@ ModbusClient client = new ModbusTCPClient("localhost", 502);
 
 //var writeCoilsAnswer = client.QA(new ModbusWMCRequest(words, 0, 9));
 
-var readCoilsAnswer = client.QA(new ModbusRCRequest(0, 16));
+var readCoilsAnswer = client.QA(new ModbusRCRequest(0x001D, 31));
 
 var byteCount = readCoilsAnswer.Data[1];
 
