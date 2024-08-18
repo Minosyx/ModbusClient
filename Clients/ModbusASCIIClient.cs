@@ -5,27 +5,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MBClient
+namespace MBClient.Clients
 {
     public class ModbusASCIIClient : ModbusClient
     {
-        private SerialPort serialPort;
-        private const int BUFFER_SIZE = 513;
+        private readonly SerialPort _serialPort;
+        private const int BufferSize = 513;
 
         public ModbusASCIIClient(string portName, int baudRate)
         {
-            serialPort = new SerialPort(portName, baudRate)
+            _serialPort = new SerialPort(portName, baudRate)
             {
                 Parity = Parity.Even
             };
-            serialPort.Open();
+            _serialPort.Open();
         }
 
         protected override ModbusMessage ReadMessage()
         {
-            var buffer = new char[BUFFER_SIZE];
+            var buffer = new char[BufferSize];
 
-            int charsRead = serialPort.Read(buffer, 0, BUFFER_SIZE);
+            int charsRead = _serialPort.Read(buffer, 0, BufferSize);
 
             var trimmedBuffer = new char[charsRead];
             Array.Copy(buffer, trimmedBuffer, charsRead);
@@ -53,7 +53,7 @@ namespace MBClient
 
             try
             {
-                serialPort.Write(requestString);
+                _serialPort.Write(requestString);
             }
             catch
             {

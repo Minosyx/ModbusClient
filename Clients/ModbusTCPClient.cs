@@ -1,7 +1,7 @@
 ﻿using System.IO.Pipes;
 using System.Net.Sockets;
 
-namespace MBClient
+namespace MBClient.Clients
 {
     public class ModbusTCPClient : ModbusClient
     {

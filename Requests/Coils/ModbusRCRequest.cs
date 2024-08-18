@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MBClient
+namespace MBClient.Requests.Coils
 {
-    public class ModbusRDIRequest : ModbusMessage
+    public class ModbusRCRequest : ModbusMessage
     {
-        public ModbusRDIRequest(ushort startAddress, ushort quantity) : base(0x02, 4)
+        public ModbusRCRequest(ushort startAddress, ushort quantity) : base(0x01, 4)
         {
             Data.FillTwoBytes(1, startAddress);
             Data.FillTwoBytes(3, quantity);

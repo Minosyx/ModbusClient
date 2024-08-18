@@ -1,4 +1,4 @@
-﻿namespace MBClient
+﻿namespace MBClient.Requests.HoldingRegisters
 {
     public class ModbusWMRRequest : ModbusMessage
     {

@@ -6,27 +6,27 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MBClient
+namespace MBClient.Clients
 {
     public class ModbusRTUClient : ModbusClient
     {
-        private SerialPort serialPort;
-        private const int BUFFER_SIZE = 256;
+        private readonly SerialPort _serialPort;
+        private const int BufferSize = 256;
 
         public ModbusRTUClient(string portName, int baudRate)
         {
-            serialPort = new SerialPort(portName, baudRate)
+            _serialPort = new SerialPort(portName, baudRate)
             {
                 Parity = Parity.Even
             };
-            serialPort.Open();
+            _serialPort.Open();
         }
 
         protected override ModbusMessage ReadMessage()
         {
-            var buffer = new byte[BUFFER_SIZE];
+            var buffer = new byte[BufferSize];
 
-            int bytesRead = serialPort.Read(buffer, 0, BUFFER_SIZE);
+            int bytesRead = _serialPort.Read(buffer, 0, BufferSize);
 
             var trimmedBuffer = new byte[bytesRead];
             Array.Copy(buffer, trimmedBuffer, bytesRead);
@@ -45,10 +45,10 @@ namespace MBClient
             request[0] = address;
             Array.Copy(modbusRequest.Data, 0, request, 1, modbusRequest.Size);
             request.FillTwoBytes(modbusRequest.Size + 1, request[..^2].CalculateCRC(), false);
-            
+
             try
             {
-                serialPort.Write(request, 0, request.Length);
+                _serialPort.Write(request, 0, request.Length);
             }
             catch
             {

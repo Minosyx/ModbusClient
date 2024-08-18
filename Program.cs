@@ -1,11 +1,14 @@
-﻿using System.IO.Ports;
-using System.Security.Cryptography;
-using System.Text;
+﻿using System.Text;
 using MBClient;
+using MBClient.Clients;
+using MBClient.Requests.Coils;
+using MBClient.Requests.DiscreteInputs;
+using MBClient.Requests.HoldingRegisters;
+using MBClient.Requests.InputRegisters;
 
 //ModbusClient client = new ModbusTCPClient("localhost", 502);
-//ModbusClient client = new ModbusRTUClient("COM1", 9600);
-//ModbusClient client = new ModbusASCIIClient("COM1", 9600);
+//ModbusClient client = new ModbusRTUClient("COM2", 9600);
+//ModbusClient client = new ModbusASCIIClient("COM2", 9600);
 
 #region Write Holding Registers
 
@@ -37,7 +40,7 @@ using MBClient;
 //    for (int j = 0; j < 10; j++)
 //    {
 
-//        Console.Write($"{readBitmap.Data.GetTwoBytes(2 * (10 * i + j + 1))} ");
+//        Console.Write($"{readBitmap.Data.GetTwoBytes(2 * (10 * i + j + 1)),4} ");
 //    }
 //    Console.WriteLine();
 //}
@@ -82,25 +85,25 @@ using MBClient;
 
 #region Coils Read
 
-var readCoilsAnswer = client.QA(new ModbusRCRequest(0, 16));
+//var readCoilsAnswer = client.QA(new ModbusRCRequest(0, 16));
 
-var byteCount = readCoilsAnswer.Data[1];
+//var byteCount = readCoilsAnswer.Data[1];
 
-var stack = new Stack<byte>();
+//var stack = new Stack<byte>();
 
-for (int i = 0; i < byteCount; i++)
-{
-    byte b = readCoilsAnswer.Data[2 + i];
-    stack.Push(b);
-}
+//for (int i = 0; i < byteCount; i++)
+//{
+//    byte b = readCoilsAnswer.Data[2 + i];
+//    stack.Push(b);
+//}
 
-var sb = new StringBuilder();
-for (int i = 0; i < byteCount; i++)
-{
-    byte b = stack.Pop();
-    sb.Append(b.ToString("X2"));
-}
+//var sb = new StringBuilder();
+//for (int i = 0; i < byteCount; i++)
+//{
+//    byte b = stack.Pop();
+//    sb.Append(b.ToString("X2"));
+//}
 
-Console.WriteLine(sb.ToString());
+//Console.WriteLine(sb.ToString());
 
 #endregion

@@ -1,7 +1,4 @@
-﻿
-
-
-namespace MBClient
+﻿namespace MBClient.Clients
 {
     public abstract class ModbusClient
     {
